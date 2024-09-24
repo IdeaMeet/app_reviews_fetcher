@@ -48,7 +48,7 @@ document.getElementById('reviewForm').addEventListener('submit', async function(
 
             currentReviews = data.reviews;
             allReviews = data.reviews; // 存储所有评论
-            totalPages = Math.ceil(currentTotalReviews / 50); // 每页50条
+            totalPages = Math.ceil(currentTotalReviews / 100); // 每页100条
             updatePagination();
             displayReviews(currentReviews, currentPage);
         } else {
@@ -116,7 +116,7 @@ function displayReviews(reviews, page) {
         reviewDiv.classList.add('review');
 
         reviewDiv.innerHTML = `
-            <div class="review-title">#${(page-1)*50 + index + 1} ${review.title}</div>
+            <div class="review-title">#${(page-1)*100 + index + 1} ${review.title}</div>
             <div class="review-meta">评分: ${review.rating} 星 | 作者: ${review.author} | 日期: ${new Date(review.date).toLocaleDateString()}</div>
             <div class="review-content">${review.content}</div>
         `;
@@ -125,9 +125,43 @@ function displayReviews(reviews, page) {
 }
 
 function updatePagination() {
-    document.getElementById('currentPage').innerText = currentPage;
-    document.getElementById('prevPage').disabled = currentPage === 1;
-    document.getElementById('nextPage').disabled = currentPage === totalPages;
+    const paginationContainer = document.getElementById('pagination');
+    paginationContainer.innerHTML = '';
+
+    const prevButton = document.createElement('button');
+    prevButton.id = 'prevPage';
+    prevButton.disabled = currentPage === 1;
+    prevButton.innerText = '上一页';
+    prevButton.addEventListener('click', async function() {
+        if (currentPage > 1) {
+            currentPage -= 1;
+            await loadPage(currentPage);
+        }
+    });
+    paginationContainer.appendChild(prevButton);
+
+    for (let i = 1; i <= totalPages; i++) {
+        const pageButton = document.createElement('button');
+        pageButton.innerText = i;
+        pageButton.disabled = i === currentPage;
+        pageButton.addEventListener('click', async function() {
+            currentPage = i;
+            await loadPage(currentPage);
+        });
+        paginationContainer.appendChild(pageButton);
+    }
+
+    const nextButton = document.createElement('button');
+    nextButton.id = 'nextPage';
+    nextButton.disabled = currentPage === totalPages;
+    nextButton.innerText = '下一页';
+    nextButton.addEventListener('click', async function() {
+        if (currentPage < totalPages) {
+            currentPage += 1;
+            await loadPage(currentPage);
+        }
+    });
+    paginationContainer.appendChild(nextButton);
 }
 
 // 下载为 Excel 功能
