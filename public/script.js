@@ -3,6 +3,7 @@
 let currentPage = 1;
 let totalPages = 1;
 let currentReviews = [];
+let allReviews = []; // 新增变量用于存储所有评论
 let currentCountry = 'us';
 let currentAppId = '';
 let currentSort = 'mostRecent';
@@ -12,6 +13,7 @@ let currentRatingFilter = ''; // 新增变量用于存储星级筛选
 document.getElementById('reviewForm').addEventListener('submit', async function(e) {
     e.preventDefault();
     currentPage = 1; // 重置为第一页
+    allReviews = []; // 重置所有评论
 
     currentCountry = document.getElementById('country').value;
     currentAppId = document.getElementById('app_id').value.trim();
@@ -45,6 +47,7 @@ document.getElementById('reviewForm').addEventListener('submit', async function(
             }
 
             currentReviews = data.reviews;
+            allReviews = data.reviews; // 存储所有评论
             totalPages = Math.ceil(currentTotalReviews / 50); // 每页50条
             updatePagination();
             displayReviews(currentReviews, currentPage);
@@ -93,6 +96,7 @@ async function loadPage(page) {
             }
 
             currentReviews = data.reviews;
+            allReviews = allReviews.concat(data.reviews); // 累加所有评论
             displayReviews(currentReviews, page);
             updatePagination();
         } else {
@@ -128,14 +132,14 @@ function updatePagination() {
 
 // 下载为 Excel 功能
 document.getElementById('downloadBtn').addEventListener('click', function() {
-    if (currentReviews.length === 0) {
+    if (allReviews.length === 0) {
         alert('没有评论可下载！');
         return;
     }
 
     // 准备数据
-    const data = currentReviews.map((review, index) => ({
-        "序号": (currentPage - 1) * 50 + index + 1,
+    const data = allReviews.map((review, index) => ({
+        "序号": index + 1,
         "标题": review.title,
         "评分": review.rating,
         "作者": review.author,
@@ -149,5 +153,5 @@ document.getElementById('downloadBtn').addEventListener('click', function() {
     XLSX.utils.book_append_sheet(workbook, worksheet, 'Reviews');
 
     // 生成 Excel 文件并触发下载
-    XLSX.writeFile(workbook, 'App_Reviews_Page_' + currentPage + '.xlsx');
+    XLSX.writeFile(workbook, 'App_Reviews.xlsx');
 });
