@@ -13,10 +13,15 @@ const axios = require('axios');
  * @returns {Promise<Array>} 评论列表
  */
 async function getAppReviews(country, appId, totalReviews = 100, sort = 'mostRecent', page = 1, rating = '') {
-    const reviews = [];
-    const fetchedReviews = await fetchAppReviews(country, appId, page, sort);
-    const filteredReviews = rating ? fetchedReviews.filter(review => review.rating === rating) : fetchedReviews;
-    reviews.push(...filteredReviews);
+    let reviews = [];
+    let currentPage = page;
+    while (reviews.length < totalReviews) {
+        const fetchedReviews = await fetchAppReviews(country, appId, currentPage, sort);
+        const filteredReviews = rating ? fetchedReviews.filter(review => review.rating === rating) : fetchedReviews;
+        reviews.push(...filteredReviews);
+        if (fetchedReviews.length === 0) break; // No more reviews to fetch
+        currentPage++;
+    }
     return reviews.slice(0, totalReviews);
 }
 
