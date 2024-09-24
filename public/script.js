@@ -3,15 +3,20 @@
 document.getElementById('reviewForm').addEventListener('submit', async function(e) {
     e.preventDefault();
     
-    const appId = document.getElementById('app_id').value;
-    const totalReviews = document.getElementById('total_reviews').value;
+    const appId = document.getElementById('app_id').value.trim();
+    const totalReviews = parseInt(document.getElementById('total_reviews').value, 10);
     const sort = document.getElementById('sort').value;
     const reviewsContainer = document.getElementById('reviews');
+
+    if (!appId) {
+        reviewsContainer.innerHTML = '请提供有效的 App ID。';
+        return;
+    }
 
     reviewsContainer.innerHTML = '加载中...';
 
     try {
-        const response = await fetch(`/api/getReviews?app_id=${appId}&total_reviews=${totalReviews}&sort=${sort}`);
+        const response = await fetch(`/api/getReviews?app_id=${encodeURIComponent(appId)}&total_reviews=${totalReviews}&sort=${encodeURIComponent(sort)}`);
         
         // 检查响应头的Content-Type
         const contentType = response.headers.get("Content-Type");
