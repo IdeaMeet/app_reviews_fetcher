@@ -7,6 +7,7 @@ let currentCountry = 'us';
 let currentAppId = '';
 let currentSort = 'mostRecent';
 let currentTotalReviews = 100;
+let currentRatingFilter = ''; // 新增变量用于存储星级筛选
 
 document.getElementById('reviewForm').addEventListener('submit', async function(e) {
     e.preventDefault();
@@ -16,6 +17,7 @@ document.getElementById('reviewForm').addEventListener('submit', async function(
     currentAppId = document.getElementById('app_id').value.trim();
     currentTotalReviews = parseInt(document.getElementById('total_reviews').value, 10);
     currentSort = document.getElementById('sort').value;
+    currentRatingFilter = document.getElementById('rating').value; // 获取星级筛选值
     const reviewsContainer = document.getElementById('reviews');
 
     if (!currentAppId) {
@@ -26,7 +28,7 @@ document.getElementById('reviewForm').addEventListener('submit', async function(
     reviewsContainer.innerHTML = '<div class="loader"></div>';
 
     try {
-        const response = await fetch(`/api/getReviews?country=${encodeURIComponent(currentCountry)}&app_id=${encodeURIComponent(currentAppId)}&total_reviews=${currentTotalReviews}&sort=${encodeURIComponent(currentSort)}&page=${currentPage}`);
+        const response = await fetch(`/api/getReviews?country=${encodeURIComponent(currentCountry)}&app_id=${encodeURIComponent(currentAppId)}&total_reviews=${currentTotalReviews}&sort=${encodeURIComponent(currentSort)}&page=${currentPage}&rating=${encodeURIComponent(currentRatingFilter)}`);
         
         // 检查响应头的Content-Type
         const contentType = response.headers.get("Content-Type");
@@ -74,7 +76,7 @@ async function loadPage(page) {
     reviewsContainer.innerHTML = '<div class="loader"></div>';
 
     try {
-        const response = await fetch(`/api/getReviews?country=${encodeURIComponent(currentCountry)}&app_id=${encodeURIComponent(currentAppId)}&total_reviews=${currentTotalReviews}&sort=${encodeURIComponent(currentSort)}&page=${page}`);
+        const response = await fetch(`/api/getReviews?country=${encodeURIComponent(currentCountry)}&app_id=${encodeURIComponent(currentAppId)}&total_reviews=${currentTotalReviews}&sort=${encodeURIComponent(currentSort)}&page=${page}&rating=${encodeURIComponent(currentRatingFilter)}`);
         
         // 检查响应头的Content-Type
         const contentType = response.headers.get("Content-Type");
