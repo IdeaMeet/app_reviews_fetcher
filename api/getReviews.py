@@ -1,8 +1,6 @@
-# api/getReviews.py
-
 import requests
 import json
-import os
+from urllib.parse import parse_qs
 
 def fetch_app_reviews(app_id, page=1, sort='mostRecent'):
     url = f"https://itunes.apple.com/rss/customerreviews/page={page}/id={app_id}/sortby={sort}/json"
@@ -32,11 +30,11 @@ def parse_review(entry):
     }
     return review
 
-def get_app_reviews(app_id, total_reviews=100):
+def get_app_reviews(app_id, total_reviews=100, sort='mostRecent'):
     reviews = []
     page = 1
     while len(reviews) < total_reviews:
-        fetched_reviews = fetch_app_reviews(app_id, page)
+        fetched_reviews = fetch_app_reviews(app_id, page, sort)
         if not fetched_reviews:
             break
         for entry in fetched_reviews:
@@ -49,16 +47,17 @@ def get_app_reviews(app_id, total_reviews=100):
 
 def handler(request, response):
     try:
-        # 获取查询参数
-        app_id = request.query.get('app_id')
-        total_reviews = int(request.query.get('total_reviews', 100))
-        sort = request.query.get('sort', 'mostRecent')
+        # 解析查询字符串
+        query = request.query
+        app_id = query.get('app_id')
+        total_reviews = int(query.get('total_reviews', 100))
+        sort = query.get('sort', 'mostRecent')
 
         if not app_id:
             response.status(400).send({"error": "Missing 'app_id' parameter."})
             return
 
-        app_reviews = get_app_reviews(app_id, total_reviews)
+        app_reviews = get_app_reviews(app_id, total_reviews, sort)
         response.status(200).send({"reviews": app_reviews})
     except Exception as e:
         response.status(500).send({"error": str(e)})
