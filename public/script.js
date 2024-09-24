@@ -12,6 +12,13 @@ document.getElementById('reviewForm').addEventListener('submit', async function(
 
     try {
         const response = await fetch(`/api/getReviews?app_id=${appId}&total_reviews=${totalReviews}&sort=${sort}`);
+        
+        // 检查响应头的Content-Type
+        const contentType = response.headers.get("Content-Type");
+        if (!contentType || !contentType.includes("application/json")) {
+            throw new Error("返回的数据不是 JSON 格式");
+        }
+
         const data = await response.json();
 
         if (response.ok) {
