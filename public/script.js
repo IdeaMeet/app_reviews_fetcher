@@ -1,4 +1,4 @@
-// frontend/script.js
+// public/script.js
 
 document.getElementById('reviewForm').addEventListener('submit', async function(e) {
     e.preventDefault();

@@ -1,5 +1,6 @@
+# api/getReviews.py
+
 import requests
-import json
 from urllib.parse import parse_qs
 
 def fetch_app_reviews(app_id, page=1, sort='mostRecent'):
