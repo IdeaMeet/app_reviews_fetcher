@@ -8,25 +8,13 @@ const axios = require('axios');
  * @param {string} appId - App 的 Apple ID
  * @param {number} totalReviews - 需要获取的评论总数
  * @param {string} sort - 排序方式，'mostRecent' 或 'mostHelpful'
+ * @param {number} page - 页码
  * @returns {Promise<Array>} 评论列表
  */
-async function getAppReviews(country, appId, totalReviews = 100, sort = 'mostRecent') {
+async function getAppReviews(country, appId, totalReviews = 100, sort = 'mostRecent', page = 1) {
     const reviews = [];
-    let page = 1;
-    const maxReviewsPerPage = 50; // 根据信息，Apple 每页最多50条评论
-
-    while (reviews.length < totalReviews) {
-        const fetchedReviews = await fetchAppReviews(country, appId, page, sort);
-        if (fetchedReviews.length === 0) {
-            break;
-        }
-        reviews.push(...fetchedReviews);
-        if (reviews.length >= totalReviews) {
-            break;
-        }
-        page += 1;
-    }
-
+    const fetchedReviews = await fetchAppReviews(country, appId, page, sort);
+    reviews.push(...fetchedReviews);
     return reviews.slice(0, totalReviews);
 }
 
@@ -78,7 +66,7 @@ function parseReview(entry) {
 }
 
 module.exports = async (req, res) => {
-    const { country = 'us', app_id, total_reviews = 100, sort = 'mostRecent' } = req.query;
+    const { country = 'us', app_id, total_reviews = 100, sort = 'mostRecent', page = 1 } = req.query;
 
     if (!app_id) {
         res.status(400).json({ error: "Missing 'app_id' parameter." });
@@ -91,10 +79,16 @@ module.exports = async (req, res) => {
         return;
     }
 
-    console.log(`Fetching reviews for Country: ${country}, App ID: ${app_id}, Total Reviews: ${totalReviewsNum}, Sort: ${sort}`);
+    let pageNum = parseInt(page, 10);
+    if (isNaN(pageNum) || pageNum <= 0) {
+        res.status(400).json({ error: "'page' must be a positive integer." });
+        return;
+    }
+
+    console.log(`Fetching reviews for Country: ${country}, App ID: ${app_id}, Total Reviews: ${totalReviewsNum}, Sort: ${sort}, Page: ${pageNum}`);
 
     try {
-        const appReviews = await getAppReviews(country, app_id, totalReviewsNum, sort);
+        const appReviews = await getAppReviews(country, app_id, totalReviewsNum, sort, pageNum);
         res.status(200).json({ reviews: appReviews });
     } catch (error) {
         console.error(`内部错误: ${error.message}`);

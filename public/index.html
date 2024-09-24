@@ -15,7 +15,7 @@
             min-height: 100vh; 
         }
         header {
-            background-color: #f2f8fc;
+            background-color: #4CAF50;
             color: white;
             padding: 20px 0;
             width: 100%;
@@ -45,7 +45,7 @@
         }
         button {
             padding: 10px;
-            background-color: #4db5fa;
+            background-color: #4CAF50;
             color: white;
             border: none;
             border-radius: 4px;
@@ -54,10 +54,10 @@
             transition: background-color 0.3s ease;
         }
         button:hover {
-            background-color: #f2f8fc;
+            background-color: #45a049;
         }
         #downloadBtn {
-            background-color: #8de3ff;
+            background-color: #008CBA;
             margin-top: 10px;
         }
         #downloadBtn:hover {
@@ -89,10 +89,24 @@
         footer {
             text-align: center;
             padding: 10px 0;
-            background-color: #454545;
+            background-color: #4CAF50;
             color: white;
             width: 100%;
             box-shadow: 0 -2px 4px rgba(0,0,0,0.1);
+        }
+        /* 添加加载动画 */
+        .loader {
+            border: 8px solid #f3f3f3;
+            border-top: 8px solid #4CAF50;
+            border-radius: 50%;
+            width: 60px;
+            height: 60px;
+            animation: spin 1s linear infinite;
+            margin: 20px auto;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
         }
     </style>
 </head>
@@ -109,7 +123,10 @@
                 <option value="jp">日本 (JP)</option>
                 <option value="gb">英国 (GB)</option>
                 <option value="au">澳大利亚 (AU)</option>
-                <!-- 可根据需要添加更多国家/地区选项 -->
+                <option value="de">德国 (DE)</option>
+                <option value="fr">法国 (FR)</option>
+                <option value="kr">韩国 (KR)</option>
+                <!-- 添加更多国家/地区 -->
             </select>
 
             <label for="app_id">App ID:</label>
@@ -130,9 +147,14 @@
 
         <h2>评论列表</h2>
         <div id="reviews"></div>
+        <div id="pagination" style="margin-top: 20px;">
+            <button id="prevPage" disabled>上一页</button>
+            <span id="currentPage">1</span>
+            <button id="nextPage">下一页</button>
+        </div>
     </main>
     <footer>
-        © 2024 App Reviews Fetcher
+        © 2023 App Reviews Fetcher
     </footer>
     
     <!-- 引入 SheetJS 库用于 Excel 导出 -->
