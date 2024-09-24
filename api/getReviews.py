@@ -2,16 +2,13 @@
 
 import json
 
-def handler(environ, start_response):
+def handler(request, response):
     try:
-        status = '200 OK'
-        headers = [('Content-Type', 'application/json')]
-        start_response(status, headers)
-        response = {"message": "Hello, World!"}
-        return [json.dumps(response).encode('utf-8')]
+        # 返回一个简单的 JSON 响应
+        response.status_code = 200
+        response.content_type = 'application/json'
+        response.body = json.dumps({"message": "Hello, World!"})
     except Exception as e:
-        status = '500 Internal Server Error'
-        headers = [('Content-Type', 'application/json')]
-        start_response(status, headers)
-        response = {"error": str(e)}
-        return [json.dumps(response).encode('utf-8')]
+        response.status_code = 500
+        response.content_type = 'application/json'
+        response.body = json.dumps({"error": str(e)})
