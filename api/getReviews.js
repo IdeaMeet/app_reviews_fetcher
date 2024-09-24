@@ -9,12 +9,14 @@ const axios = require('axios');
  * @param {number} totalReviews - 需要获取的评论总数
  * @param {string} sort - 排序方式，'mostRecent' 或 'mostHelpful'
  * @param {number} page - 页码
+ * @param {string} rating - 星级筛选
  * @returns {Promise<Array>} 评论列表
  */
-async function getAppReviews(country, appId, totalReviews = 100, sort = 'mostRecent', page = 1) {
+async function getAppReviews(country, appId, totalReviews = 100, sort = 'mostRecent', page = 1, rating = '') {
     const reviews = [];
     const fetchedReviews = await fetchAppReviews(country, appId, page, sort);
-    reviews.push(...fetchedReviews);
+    const filteredReviews = rating ? fetchedReviews.filter(review => review.rating === rating) : fetchedReviews;
+    reviews.push(...filteredReviews);
     return reviews.slice(0, totalReviews);
 }
 
@@ -66,7 +68,7 @@ function parseReview(entry) {
 }
 
 module.exports = async (req, res) => {
-    const { country = 'us', app_id, total_reviews = 100, sort = 'mostRecent', page = 1 } = req.query;
+    const { country = 'us', app_id, total_reviews = 100, sort = 'mostRecent', page = 1, rating = '' } = req.query;
 
     if (!app_id) {
         res.status(400).json({ error: "Missing 'app_id' parameter." });
@@ -85,10 +87,10 @@ module.exports = async (req, res) => {
         return;
     }
 
-    console.log(`Fetching reviews for Country: ${country}, App ID: ${app_id}, Total Reviews: ${totalReviewsNum}, Sort: ${sort}, Page: ${pageNum}`);
+    console.log(`Fetching reviews for Country: ${country}, App ID: ${app_id}, Total Reviews: ${totalReviewsNum}, Sort: ${sort}, Page: ${pageNum}, Rating: ${rating}`);
 
     try {
-        const appReviews = await getAppReviews(country, app_id, totalReviewsNum, sort, pageNum);
+        const appReviews = await getAppReviews(country, app_id, totalReviewsNum, sort, pageNum, rating);
         res.status(200).json({ reviews: appReviews });
     } catch (error) {
         console.error(`内部错误: ${error.message}`);
