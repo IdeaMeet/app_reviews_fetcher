@@ -3,19 +3,20 @@
 const axios = require('axios');
 
 /**
- * 获取指定 App 的评论
+ * 获取指定国家和 App 的评论
+ * @param {string} country - 国家代码，如 'us', 'cn'
  * @param {string} appId - App 的 Apple ID
  * @param {number} totalReviews - 需要获取的评论总数
  * @param {string} sort - 排序方式，'mostRecent' 或 'mostHelpful'
  * @returns {Promise<Array>} 评论列表
  */
-async function getAppReviews(appId, totalReviews = 100, sort = 'mostRecent') {
+async function getAppReviews(country, appId, totalReviews = 100, sort = 'mostRecent') {
     const reviews = [];
     let page = 1;
-    const maxReviewsPerPage = 50; // 根据 Apple RSS Feed 的限制
+    const maxReviewsPerPage = 50; // 根据信息，Apple 每页最多50条评论
 
     while (reviews.length < totalReviews) {
-        const fetchedReviews = await fetchAppReviews(appId, page, sort);
+        const fetchedReviews = await fetchAppReviews(country, appId, page, sort);
         if (fetchedReviews.length === 0) {
             break;
         }
@@ -30,14 +31,15 @@ async function getAppReviews(appId, totalReviews = 100, sort = 'mostRecent') {
 }
 
 /**
- * 从 Apple RSS Feed 获取指定页面的评论
+ * 从 Apple RSS Feed 获取指定国家、页面的评论
+ * @param {string} country - 国家代码，如 'us', 'cn'
  * @param {string} appId - App 的 Apple ID
  * @param {number} page - 页码
  * @param {string} sort - 排序方式
  * @returns {Promise<Array>} 评论列表
  */
-async function fetchAppReviews(appId, page = 1, sort = 'mostRecent') {
-    const url = `https://itunes.apple.com/rss/customerreviews/page=${page}/id=${appId}/sortby=${sort}/json`;
+async function fetchAppReviews(country, appId, page = 1, sort = 'mostRecent') {
+    const url = `https://itunes.apple.com/${country}/rss/customerreviews/page=${page}/id=${appId}/sortby=${sort}/json`;
     try {
         const response = await axios.get(url, {
             headers: {
@@ -54,7 +56,7 @@ async function fetchAppReviews(appId, page = 1, sort = 'mostRecent') {
             return [];
         }
     } catch (error) {
-        console.error(`请求失败: ${error.message}`);
+        console.error(`请求失败 (${country}): ${error.message}`);
         return [];
     }
 }
@@ -76,7 +78,7 @@ function parseReview(entry) {
 }
 
 module.exports = async (req, res) => {
-    const { app_id, total_reviews = 100, sort = 'mostRecent' } = req.query;
+    const { country = 'us', app_id, total_reviews = 100, sort = 'mostRecent' } = req.query;
 
     if (!app_id) {
         res.status(400).json({ error: "Missing 'app_id' parameter." });
@@ -89,8 +91,10 @@ module.exports = async (req, res) => {
         return;
     }
 
+    console.log(`Fetching reviews for Country: ${country}, App ID: ${app_id}, Total Reviews: ${totalReviewsNum}, Sort: ${sort}`);
+
     try {
-        const appReviews = await getAppReviews(app_id, totalReviewsNum, sort);
+        const appReviews = await getAppReviews(country, app_id, totalReviewsNum, sort);
         res.status(200).json({ reviews: appReviews });
     } catch (error) {
         console.error(`内部错误: ${error.message}`);
