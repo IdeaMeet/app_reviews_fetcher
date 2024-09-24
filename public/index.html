@@ -141,6 +141,16 @@
                 <option value="mostHelpful">有用</option>
             </select>
 
+            <label for="rating">筛选好评/差评:</label>
+            <select id="rating" name="rating">
+                <option value="">所有</option>
+                <option value="1">1 星</option>
+                <option value="2">2 星</option>
+                <option value="3">3 星</option>
+                <option value="4">4 星</option>
+                <option value="5">5 星</option>
+            </select>
+
             <button type="submit">获取评论</button>
             <button type="button" id="downloadBtn">下载为 Excel</button>
         </form>
@@ -160,7 +170,7 @@
             document.getElementById('reviewsTitle').style.display = 'block';
             document.getElementById('reviews').style.display = 'block';
             document.getElementById('pagination').style.display = 'block';
-            // 这里可以添加获取评论的逻辑
+            // 这里可以添加获取评论的逻辑，包括星级筛选
         });
     </script>
     
