@@ -96,7 +96,6 @@ async function loadPage(page) {
             }
 
             currentReviews = data.reviews;
-            allReviews = allReviews.concat(data.reviews); // 累加所有评论
             displayReviews(currentReviews, page);
             updatePagination();
         } else {
