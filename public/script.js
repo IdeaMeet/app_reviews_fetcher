@@ -188,3 +188,32 @@ document.getElementById('downloadBtn').addEventListener('click', function() {
     // 生成 Excel 文件并触发下载
     XLSX.writeFile(workbook, 'App_Reviews.xlsx');
 });
+
+// 关闭"更多工具"功能
+document.getElementById('close-more-tools').addEventListener('click', function() {
+    document.getElementById('more-tools').classList.add('hidden');
+    document.getElementById('show-more-tools').style.display = 'block';
+});
+
+// 添加一个按钮来重新显示"更多工具"（可选）
+function addShowMoreToolsButton() {
+    const button = document.createElement('button');
+    button.id = 'show-more-tools';
+    button.textContent = '显示更多工具';
+    button.style.position = 'fixed';
+    button.style.right = '20px';
+    button.style.top = '20px';
+    button.style.display = 'none';
+    
+    button.addEventListener('click', function() {
+        document.getElementById('more-tools').classList.remove('hidden');
+        this.style.display = 'none';
+    });
+
+    document.body.appendChild(button);
+}
+
+// 确保 DOM 加载完成后再执行
+document.addEventListener('DOMContentLoaded', function() {
+    addShowMoreToolsButton();
+});

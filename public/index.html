@@ -32,6 +32,7 @@
             border-radius: 8px; 
             margin-top: 20px;
             margin-bottom: 20px;
+            margin-right: 240px; /* 200px宽度 + 40px右边距 */
         }
         h1 { font-size: 24px; margin-bottom: 20px; color: #333; }
         form { display: flex; flex-direction: column; }
@@ -107,6 +108,69 @@
         @keyframes spin {
             0% { transform: rotate(0deg); }
             100% { transform: rotate(360deg); }
+        }
+        
+        /* 添加"更多工具"样式 */
+        #more-tools {
+            position: fixed;
+            right: 20px;
+            top: 100px;
+            width: 200px;
+            background-color: #ffc;
+            padding: 15px;
+            border-radius: 5px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        /* 添加关闭按钮样式 */
+        #close-more-tools {
+            position: absolute;
+            top: 5px;
+            right: 5px;
+            background: none;
+            border: none;
+            font-size: 20px;
+            cursor: pointer;
+            color: #666;
+        }
+
+        #close-more-tools:hover {
+            color: #000;
+        }
+
+        #more-tools h3 {
+            margin-top: 0;
+            color: #333;
+            font-size: 18px;
+            border-bottom: 1px solid #ccc;
+            padding-bottom: 5px;
+        }
+
+        #more-tools ul {
+            list-style-type: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        #more-tools li {
+            margin-bottom: 10px;
+        }
+
+        #more-tools a {
+            color: #0066cc;
+            text-decoration: none;
+            font-size: 14px;
+        }
+
+        #more-tools a:hover {
+            text-decoration: underline;
+        }
+
+        /* 现有的样式 */
+
+        #more-tools.hidden {
+            display: none !important;
         }
     </style>
 </head>
@@ -189,6 +253,49 @@
                 input.value = match[1]; // 自动填充 ID
             }
         }
+    </script>
+    
+    <!-- 添加"更多工具"列表 -->
+    <div id="more-tools">
+        <button id="close-more-tools">&times;</button>
+        <h3>更多工具</h3>
+        <ul>
+            <li><a href="https://regeai.com/revenue.html" target="_blank">查询App下载量和收入</a></li>
+            <!-- 可以添加更多工具链接 -->
+        </ul>
+    </div>
+    
+    <script>
+        // 关闭"更多工具"功能
+        document.getElementById('close-more-tools').addEventListener('click', function() {
+            document.getElementById('more-tools').style.display = 'none';
+        });
+
+        // 添加一个按钮来重新显示"更多工具"（可选）
+        function addShowMoreToolsButton() {
+            const button = document.createElement('button');
+            button.id = 'show-more-tools';
+            button.textContent = '显示更多工具';
+            button.style.position = 'fixed';
+            button.style.right = '20px';
+            button.style.top = '20px';
+            button.style.display = 'none';
+            
+            button.addEventListener('click', function() {
+                document.getElementById('more-tools').style.display = 'block';
+                this.style.display = 'none';
+            });
+
+            document.body.appendChild(button);
+        }
+
+        addShowMoreToolsButton();
+
+        // 当关闭"更多工具"时显示这个按钮
+        document.getElementById('close-more-tools').addEventListener('click', function() {
+            document.getElementById('more-tools').style.display = 'none';
+            document.getElementById('show-more-tools').style.display = 'block';
+        });
     </script>
 </body>
 </html>
