@@ -19,7 +19,15 @@ document.getElementById('reviewForm').addEventListener('submit', async function(
     currentAppId = document.getElementById('app_id').value.trim();
     currentTotalReviews = parseInt(document.getElementById('total_reviews').value, 10);
     currentSort = document.getElementById('sort').value;
-    currentRatingFilter = document.getElementById('rating').value; // 获取星级筛选值
+    // 获取复选框星级
+    const ratingCheckboxes = document.querySelectorAll('#rating-group input[name="rating"]');
+    let selectedRatings = Array.from(ratingCheckboxes).filter(cb => cb.checked).map(cb => cb.value);
+    if (selectedRatings.includes('')) {
+        selectedRatings = ['']; // 只选"所有"
+    } else {
+        selectedRatings = selectedRatings.filter(v => v);
+    }
+    currentRatingFilter = selectedRatings.join(',');
     const reviewsContainer = document.getElementById('reviews');
 
     if (!currentAppId) {
