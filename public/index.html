@@ -246,15 +246,15 @@
                 <option value="mostHelpful">有用</option>
             </select>
 
-            <label for="rating">筛选星级:</label>
-            <select id="rating" name="rating" multiple size="6">
-                <option value="">所有</option>
-                <option value="1">1 星</option>
-                <option value="2">2 星</option>
-                <option value="3">3 星</option>
-                <option value="4">4 星</option>
-                <option value="5">5 星</option>
-            </select>
+            <label>筛选星级:</label>
+            <div id="rating-group">
+                <label><input type="checkbox" name="rating" value="" checked> 所有</label>
+                <label><input type="checkbox" name="rating" value="1"> 1 星</label>
+                <label><input type="checkbox" name="rating" value="2"> 2 星</label>
+                <label><input type="checkbox" name="rating" value="3"> 3 星</label>
+                <label><input type="checkbox" name="rating" value="4"> 4 星</label>
+                <label><input type="checkbox" name="rating" value="5"> 5 星</label>
+            </div>
 
             <button type="submit">获取评论</button>
             <button type="button" id="downloadBtn">下载为 Excel</button>
@@ -271,9 +271,9 @@
     <script>
         document.getElementById('reviewForm').addEventListener('submit', function(event) {
             event.preventDefault();
-            // 获取多选星级，"所有"选中时只传空字符串，否则用逗号拼接
-            const ratingSelect = document.getElementById('rating');
-            let selectedRatings = Array.from(ratingSelect.selectedOptions).map(opt => opt.value);
+            // 获取复选框星级
+            const ratingCheckboxes = document.querySelectorAll('#rating-group input[name="rating"]');
+            let selectedRatings = Array.from(ratingCheckboxes).filter(cb => cb.checked).map(cb => cb.value);
             if (selectedRatings.includes('')) {
                 selectedRatings = ['']; // 只选"所有"
             } else {
@@ -290,15 +290,25 @@
             // 这里可以添加获取评论的逻辑
         });
         // "所有"选项互斥逻辑
-        document.getElementById('rating').addEventListener('change', function(e) {
-            const options = Array.from(this.options);
-            if (this.selectedOptions.length > 1 && options[0].selected) {
-                // 如果"所有"被选中且还有其他选项，取消其他选项
-                for (let i = 1; i < options.length; i++) options[i].selected = false;
-            } else if (!options[0].selected && this.selectedOptions.length > 0) {
-                // 如果选了其他选项，取消"所有"
-                options[0].selected = false;
-            }
+        document.querySelectorAll('#rating-group input[name="rating"]').forEach(cb => {
+            cb.addEventListener('change', function() {
+                const allCb = document.querySelector('#rating-group input[value=""]');
+                if (this.value === '') {
+                    if (this.checked) {
+                        // 选中"所有"时取消其他
+                        document.querySelectorAll('#rating-group input[name="rating"]').forEach(other => {
+                            if (other.value !== '') other.checked = false;
+                        });
+                    }
+                } else {
+                    if (this.checked) {
+                        allCb.checked = false;
+                    }
+                    // 如果所有都没选，自动选"所有"
+                    const anyChecked = Array.from(document.querySelectorAll('#rating-group input[name="rating"]')).some(cb => cb.checked && cb.value !== '');
+                    if (!anyChecked) allCb.checked = true;
+                }
+            });
         });
     </script>
     
