@@ -190,6 +190,47 @@
                 <option value="de">德国 (DE)</option>
                 <option value="fr">法国 (FR)</option>
                 <option value="kr">韩国 (KR)</option>
+                <option value="ca">加拿大 (CA)</option>
+                <option value="ru">俄罗斯 (RU)</option>
+                <option value="it">意大利 (IT)</option>
+                <option value="es">西班牙 (ES)</option>
+                <option value="in">印度 (IN)</option>
+                <option value="br">巴西 (BR)</option>
+                <option value="mx">墨西哥 (MX)</option>
+                <option value="tr">土耳其 (TR)</option>
+                <option value="sa">沙特阿拉伯 (SA)</option>
+                <option value="ae">阿联酋 (AE)</option>
+                <option value="sg">新加坡 (SG)</option>
+                <option value="th">泰国 (TH)</option>
+                <option value="id">印度尼西亚 (ID)</option>
+                <option value="my">马来西亚 (MY)</option>
+                <option value="hk">中国香港 (HK)</option>
+                <option value="tw">中国台湾 (TW)</option>
+                <option value="ch">瑞士 (CH)</option>
+                <option value="nl">荷兰 (NL)</option>
+                <option value="se">瑞典 (SE)</option>
+                <option value="no">挪威 (NO)</option>
+                <option value="fi">芬兰 (FI)</option>
+                <option value="dk">丹麦 (DK)</option>
+                <option value="be">比利时 (BE)</option>
+                <option value="pl">波兰 (PL)</option>
+                <option value="at">奥地利 (AT)</option>
+                <option value="ie">爱尔兰 (IE)</option>
+                <option value="cz">捷克 (CZ)</option>
+                <option value="za">南非 (ZA)</option>
+                <option value="ar">阿根廷 (AR)</option>
+                <option value="cl">智利 (CL)</option>
+                <option value="nz">新西兰 (NZ)</option>
+                <option value="pt">葡萄牙 (PT)</option>
+                <option value="gr">希腊 (GR)</option>
+                <option value="hu">匈牙利 (HU)</option>
+                <option value="il">以色列 (IL)</option>
+                <option value="eg">埃及 (EG)</option>
+                <option value="ua">乌克兰 (UA)</option>
+                <option value="ph">菲律宾 (PH)</option>
+                <option value="ro">罗马尼亚 (RO)</option>
+                <option value="co">哥伦比亚 (CO)</option>
+                <option value="vn">越南 (VN)</option>
                 <!-- 添加更多国家/地区 -->
             </select>
 
@@ -206,7 +247,7 @@
             </select>
 
             <label for="rating">筛选星级:</label>
-            <select id="rating" name="rating">
+            <select id="rating" name="rating" multiple size="6">
                 <option value="">所有</option>
                 <option value="1">1 星</option>
                 <option value="2">2 星</option>
@@ -230,11 +271,34 @@
     <script>
         document.getElementById('reviewForm').addEventListener('submit', function(event) {
             event.preventDefault();
+            // 获取多选星级，"所有"选中时只传空字符串，否则用逗号拼接
+            const ratingSelect = document.getElementById('rating');
+            let selectedRatings = Array.from(ratingSelect.selectedOptions).map(opt => opt.value);
+            if (selectedRatings.includes('')) {
+                selectedRatings = ['']; // 只选"所有"
+            } else {
+                selectedRatings = selectedRatings.filter(v => v);
+            }
+            // 构造查询参数
+            const formData = new FormData(event.target);
+            formData.set('rating', selectedRatings.join(','));
+            // 这里可以将 formData 传递给后端，或用 URLSearchParams/formData.entries() 构造 fetch 请求
             // 显示评论列表和分页
             document.getElementById('reviewsTitle').style.display = 'block';
             document.getElementById('reviews').style.display = 'block';
             document.getElementById('pagination').style.display = 'block';
             // 这里可以添加获取评论的逻辑
+        });
+        // "所有"选项互斥逻辑
+        document.getElementById('rating').addEventListener('change', function(e) {
+            const options = Array.from(this.options);
+            if (this.selectedOptions.length > 1 && options[0].selected) {
+                // 如果"所有"被选中且还有其他选项，取消其他选项
+                for (let i = 1; i < options.length; i++) options[i].selected = false;
+            } else if (!options[0].selected && this.selectedOptions.length > 0) {
+                // 如果选了其他选项，取消"所有"
+                options[0].selected = false;
+            }
         });
     </script>
     
