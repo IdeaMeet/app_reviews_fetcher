@@ -15,9 +15,16 @@ const axios = require('axios');
 async function getAppReviews(country, appId, totalReviews = 100, sort = 'mostRecent', page = 1, rating = '') {
     let reviews = [];
     let currentPage = page;
+    // 支持多星级
+    let ratingArr = [];
+    if (typeof rating === 'string' && rating) {
+        ratingArr = rating.split(',').filter(r => r);
+    }
     while (reviews.length < totalReviews) {
         const fetchedReviews = await fetchAppReviews(country, appId, currentPage, sort);
-        const filteredReviews = rating ? fetchedReviews.filter(review => review.rating === rating) : fetchedReviews;
+        const filteredReviews = ratingArr.length > 0 ?
+            fetchedReviews.filter(review => ratingArr.includes(review.rating)) :
+            fetchedReviews;
         reviews.push(...filteredReviews);
         if (fetchedReviews.length === 0) break; // No more reviews to fetch
         currentPage++;
@@ -95,6 +102,7 @@ module.exports = async (req, res) => {
     console.log(`Fetching reviews for Country: ${country}, App ID: ${app_id}, Total Reviews: ${totalReviewsNum}, Sort: ${sort}, Page: ${pageNum}, Rating: ${rating}`);
 
     try {
+        // rating 可能为逗号分隔字符串
         const appReviews = await getAppReviews(country, app_id, totalReviewsNum, sort, pageNum, rating);
         res.status(200).json({ reviews: appReviews });
     } catch (error) {
