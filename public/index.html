@@ -172,6 +172,40 @@
         #more-tools.hidden {
             display: none !important;
         }
+
+        /* 复选框组样式 */
+        #country-group, #rating-group {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-bottom: 15px;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            background-color: #f9f9f9;
+        }
+
+        #country-group label, #rating-group label {
+            display: flex;
+            align-items: center;
+            margin: 0;
+            padding: 5px 10px;
+            background-color: white;
+            border: 1px solid #ddd;
+            border-radius: 3px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: background-color 0.2s ease;
+        }
+
+        #country-group label:hover, #rating-group label:hover {
+            background-color: #e9e9e9;
+        }
+
+        #country-group input[type="checkbox"], #rating-group input[type="checkbox"] {
+            margin: 0 5px 0 0;
+            padding: 0;
+        }
     </style>
 </head>
 <body>
@@ -180,59 +214,59 @@
     </header>
     <main>
         <form id="reviewForm">
-            <label for="country">应用所在国家/地区:</label>
-            <select id="country" name="country" required>
-                <option value="us">美国 (US)</option>
-                <option value="cn">中国 (CN)</option>
-                <option value="jp">日本 (JP)</option>
-                <option value="gb">英国 (GB)</option>
-                <option value="au">澳大利亚 (AU)</option>
-                <option value="de">德国 (DE)</option>
-                <option value="fr">法国 (FR)</option>
-                <option value="kr">韩国 (KR)</option>
-                <option value="ca">加拿大 (CA)</option>
-                <option value="ru">俄罗斯 (RU)</option>
-                <option value="it">意大利 (IT)</option>
-                <option value="es">西班牙 (ES)</option>
-                <option value="in">印度 (IN)</option>
-                <option value="br">巴西 (BR)</option>
-                <option value="mx">墨西哥 (MX)</option>
-                <option value="tr">土耳其 (TR)</option>
-                <option value="sa">沙特阿拉伯 (SA)</option>
-                <option value="ae">阿联酋 (AE)</option>
-                <option value="sg">新加坡 (SG)</option>
-                <option value="th">泰国 (TH)</option>
-                <option value="id">印度尼西亚 (ID)</option>
-                <option value="my">马来西亚 (MY)</option>
-                <option value="hk">中国香港 (HK)</option>
-                <option value="tw">中国台湾 (TW)</option>
-                <option value="ch">瑞士 (CH)</option>
-                <option value="nl">荷兰 (NL)</option>
-                <option value="se">瑞典 (SE)</option>
-                <option value="no">挪威 (NO)</option>
-                <option value="fi">芬兰 (FI)</option>
-                <option value="dk">丹麦 (DK)</option>
-                <option value="be">比利时 (BE)</option>
-                <option value="pl">波兰 (PL)</option>
-                <option value="at">奥地利 (AT)</option>
-                <option value="ie">爱尔兰 (IE)</option>
-                <option value="cz">捷克 (CZ)</option>
-                <option value="za">南非 (ZA)</option>
-                <option value="ar">阿根廷 (AR)</option>
-                <option value="cl">智利 (CL)</option>
-                <option value="nz">新西兰 (NZ)</option>
-                <option value="pt">葡萄牙 (PT)</option>
-                <option value="gr">希腊 (GR)</option>
-                <option value="hu">匈牙利 (HU)</option>
-                <option value="il">以色列 (IL)</option>
-                <option value="eg">埃及 (EG)</option>
-                <option value="ua">乌克兰 (UA)</option>
-                <option value="ph">菲律宾 (PH)</option>
-                <option value="ro">罗马尼亚 (RO)</option>
-                <option value="co">哥伦比亚 (CO)</option>
-                <option value="vn">越南 (VN)</option>
-                <!-- 添加更多国家/地区 -->
-            </select>
+            <label>应用所在国家/地区:</label>
+            <div id="country-group">
+                <label><input type="checkbox" name="country" value="" checked> 所有</label>
+                <label><input type="checkbox" name="country" value="us"> 美国 (US)</label>
+                <label><input type="checkbox" name="country" value="cn"> 中国 (CN)</label>
+                <label><input type="checkbox" name="country" value="jp"> 日本 (JP)</label>
+                <label><input type="checkbox" name="country" value="gb"> 英国 (GB)</label>
+                <label><input type="checkbox" name="country" value="au"> 澳大利亚 (AU)</label>
+                <label><input type="checkbox" name="country" value="de"> 德国 (DE)</label>
+                <label><input type="checkbox" name="country" value="fr"> 法国 (FR)</label>
+                <label><input type="checkbox" name="country" value="kr"> 韩国 (KR)</label>
+                <label><input type="checkbox" name="country" value="ca"> 加拿大 (CA)</label>
+                <label><input type="checkbox" name="country" value="ru"> 俄罗斯 (RU)</label>
+                <label><input type="checkbox" name="country" value="it"> 意大利 (IT)</label>
+                <label><input type="checkbox" name="country" value="es"> 西班牙 (ES)</label>
+                <label><input type="checkbox" name="country" value="in"> 印度 (IN)</label>
+                <label><input type="checkbox" name="country" value="br"> 巴西 (BR)</label>
+                <label><input type="checkbox" name="country" value="mx"> 墨西哥 (MX)</label>
+                <label><input type="checkbox" name="country" value="tr"> 土耳其 (TR)</label>
+                <label><input type="checkbox" name="country" value="sa"> 沙特阿拉伯 (SA)</label>
+                <label><input type="checkbox" name="country" value="ae"> 阿联酋 (AE)</label>
+                <label><input type="checkbox" name="country" value="sg"> 新加坡 (SG)</label>
+                <label><input type="checkbox" name="country" value="th"> 泰国 (TH)</label>
+                <label><input type="checkbox" name="country" value="id"> 印度尼西亚 (ID)</label>
+                <label><input type="checkbox" name="country" value="my"> 马来西亚 (MY)</label>
+                <label><input type="checkbox" name="country" value="hk"> 中国香港 (HK)</label>
+                <label><input type="checkbox" name="country" value="tw"> 中国台湾 (TW)</label>
+                <label><input type="checkbox" name="country" value="ch"> 瑞士 (CH)</label>
+                <label><input type="checkbox" name="country" value="nl"> 荷兰 (NL)</label>
+                <label><input type="checkbox" name="country" value="se"> 瑞典 (SE)</label>
+                <label><input type="checkbox" name="country" value="no"> 挪威 (NO)</label>
+                <label><input type="checkbox" name="country" value="fi"> 芬兰 (FI)</label>
+                <label><input type="checkbox" name="country" value="dk"> 丹麦 (DK)</label>
+                <label><input type="checkbox" name="country" value="be"> 比利时 (BE)</label>
+                <label><input type="checkbox" name="country" value="pl"> 波兰 (PL)</label>
+                <label><input type="checkbox" name="country" value="at"> 奥地利 (AT)</label>
+                <label><input type="checkbox" name="country" value="ie"> 爱尔兰 (IE)</label>
+                <label><input type="checkbox" name="country" value="cz"> 捷克 (CZ)</label>
+                <label><input type="checkbox" name="country" value="za"> 南非 (ZA)</label>
+                <label><input type="checkbox" name="country" value="ar"> 阿根廷 (AR)</label>
+                <label><input type="checkbox" name="country" value="cl"> 智利 (CL)</label>
+                <label><input type="checkbox" name="country" value="nz"> 新西兰 (NZ)</label>
+                <label><input type="checkbox" name="country" value="pt"> 葡萄牙 (PT)</label>
+                <label><input type="checkbox" name="country" value="gr"> 希腊 (GR)</label>
+                <label><input type="checkbox" name="country" value="hu"> 匈牙利 (HU)</label>
+                <label><input type="checkbox" name="country" value="il"> 以色列 (IL)</label>
+                <label><input type="checkbox" name="country" value="eg"> 埃及 (EG)</label>
+                <label><input type="checkbox" name="country" value="ua"> 乌克兰 (UA)</label>
+                <label><input type="checkbox" name="country" value="ph"> 菲律宾 (PH)</label>
+                <label><input type="checkbox" name="country" value="ro"> 罗马尼亚 (RO)</label>
+                <label><input type="checkbox" name="country" value="co"> 哥伦比亚 (CO)</label>
+                <label><input type="checkbox" name="country" value="vn"> 越南 (VN)</label>
+            </div>
 
             <label for="app_id">App ID:</label>
             <input type="text" id="app_id" name="app_id" required placeholder="请输入应用在App Store的网址或Apple ID" oninput="extractAppId()">
@@ -268,49 +302,7 @@
             <button id="nextPage">下一页</button>
         </div>
         
-    <script>
-        document.getElementById('reviewForm').addEventListener('submit', function(event) {
-            event.preventDefault();
-            // 获取复选框星级
-            const ratingCheckboxes = document.querySelectorAll('#rating-group input[name="rating"]');
-            let selectedRatings = Array.from(ratingCheckboxes).filter(cb => cb.checked).map(cb => cb.value);
-            if (selectedRatings.includes('')) {
-                selectedRatings = ['']; // 只选"所有"
-            } else {
-                selectedRatings = selectedRatings.filter(v => v);
-            }
-            // 构造查询参数
-            const formData = new FormData(event.target);
-            formData.set('rating', selectedRatings.join(','));
-            // 这里可以将 formData 传递给后端，或用 URLSearchParams/formData.entries() 构造 fetch 请求
-            // 显示评论列表和分页
-            document.getElementById('reviewsTitle').style.display = 'block';
-            document.getElementById('reviews').style.display = 'block';
-            document.getElementById('pagination').style.display = 'block';
-            // 这里可以添加获取评论的逻辑
-        });
-        // "所有"选项互斥逻辑
-        document.querySelectorAll('#rating-group input[name="rating"]').forEach(cb => {
-            cb.addEventListener('change', function() {
-                const allCb = document.querySelector('#rating-group input[value=""]');
-                if (this.value === '') {
-                    if (this.checked) {
-                        // 选中"所有"时取消其他
-                        document.querySelectorAll('#rating-group input[name="rating"]').forEach(other => {
-                            if (other.value !== '') other.checked = false;
-                        });
-                    }
-                } else {
-                    if (this.checked) {
-                        allCb.checked = false;
-                    }
-                    // 如果所有都没选，自动选"所有"
-                    const anyChecked = Array.from(document.querySelectorAll('#rating-group input[name="rating"]')).some(cb => cb.checked && cb.value !== '');
-                    if (!anyChecked) allCb.checked = true;
-                }
-            });
-        });
-    </script>
+
     
     <!-- 引入 SheetJS 库用于 Excel 导出 -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
