@@ -333,37 +333,6 @@
         </ul>
     </div>
     
-    <script>
-        // 关闭"更多工具"功能
-        document.getElementById('close-more-tools').addEventListener('click', function() {
-            document.getElementById('more-tools').style.display = 'none';
-        });
 
-        // 添加一个按钮来重新显示"更多工具"（可选）
-        function addShowMoreToolsButton() {
-            const button = document.createElement('button');
-            button.id = 'show-more-tools';
-            button.textContent = '显示更多工具';
-            button.style.position = 'fixed';
-            button.style.right = '20px';
-            button.style.top = '20px';
-            button.style.display = 'none';
-            
-            button.addEventListener('click', function() {
-                document.getElementById('more-tools').style.display = 'block';
-                this.style.display = 'none';
-            });
-
-            document.body.appendChild(button);
-        }
-
-        addShowMoreToolsButton();
-
-        // 当关闭"更多工具"时显示这个按钮
-        document.getElementById('close-more-tools').addEventListener('click', function() {
-            document.getElementById('more-tools').style.display = 'none';
-            document.getElementById('show-more-tools').style.display = 'block';
-        });
-    </script>
 </body>
 </html>
