@@ -15,7 +15,15 @@ document.getElementById('reviewForm').addEventListener('submit', async function(
     currentPage = 1; // 重置为第一页
     allReviews = []; // 重置所有评论
 
-    currentCountry = document.getElementById('country').value;
+    // 获取复选框国家选择
+    const countryCheckboxes = document.querySelectorAll('#country-group input[name="country"]');
+    let selectedCountries = Array.from(countryCheckboxes).filter(cb => cb.checked).map(cb => cb.value);
+    if (selectedCountries.includes('')) {
+        selectedCountries = ['']; // 只选"所有"
+    } else {
+        selectedCountries = selectedCountries.filter(v => v);
+    }
+    currentCountry = selectedCountries.join(',');
     currentAppId = document.getElementById('app_id').value.trim();
     currentTotalReviews = parseInt(document.getElementById('total_reviews').value, 10);
     currentSort = document.getElementById('sort').value;
@@ -224,4 +232,48 @@ function addShowMoreToolsButton() {
 // 确保 DOM 加载完成后再执行
 document.addEventListener('DOMContentLoaded', function() {
     addShowMoreToolsButton();
+    
+    // "所有"选项互斥逻辑 - 星级筛选
+    document.querySelectorAll('#rating-group input[name="rating"]').forEach(cb => {
+        cb.addEventListener('change', function() {
+            const allCb = document.querySelector('#rating-group input[value=""]');
+            if (this.value === '') {
+                if (this.checked) {
+                    // 选中"所有"时取消其他
+                    document.querySelectorAll('#rating-group input[name="rating"]').forEach(other => {
+                        if (other.value !== '') other.checked = false;
+                    });
+                }
+            } else {
+                if (this.checked) {
+                    allCb.checked = false;
+                }
+                // 如果所有都没选，自动选"所有"
+                const anyChecked = Array.from(document.querySelectorAll('#rating-group input[name="rating"]')).some(cb => cb.checked && cb.value !== '');
+                if (!anyChecked) allCb.checked = true;
+            }
+        });
+    });
+
+    // "所有"选项互斥逻辑 - 国家选择
+    document.querySelectorAll('#country-group input[name="country"]').forEach(cb => {
+        cb.addEventListener('change', function() {
+            const allCb = document.querySelector('#country-group input[value=""]');
+            if (this.value === '') {
+                if (this.checked) {
+                    // 选中"所有"时取消其他
+                    document.querySelectorAll('#country-group input[name="country"]').forEach(other => {
+                        if (other.value !== '') other.checked = false;
+                    });
+                }
+            } else {
+                if (this.checked) {
+                    allCb.checked = false;
+                }
+                // 如果所有都没选，自动选"所有"
+                const anyChecked = Array.from(document.querySelectorAll('#country-group input[name="country"]')).some(cb => cb.checked && cb.value !== '');
+                if (!anyChecked) allCb.checked = true;
+            }
+        });
+    });
 });
