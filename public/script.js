@@ -75,23 +75,12 @@ document.getElementById('reviewForm').addEventListener('submit', async function(
     }
 });
 
-// 添加分页控制
-document.getElementById('nextPage').addEventListener('click', async function() {
-    if (currentPage < totalPages) {
-        currentPage += 1;
-        await loadPage(currentPage);
-    }
-});
 
-document.getElementById('prevPage').addEventListener('click', async function() {
-    if (currentPage > 1) {
-        currentPage -= 1;
-        await loadPage(currentPage);
-    }
-});
 
 async function loadPage(page) {
     const reviewsContainer = document.getElementById('reviews');
+    if (!reviewsContainer) return;
+    
     reviewsContainer.innerHTML = '<div class="loader"></div>';
 
     try {
@@ -124,6 +113,8 @@ async function loadPage(page) {
 
 function displayReviews(reviews, page) {
     const reviewsContainer = document.getElementById('reviews');
+    if (!reviewsContainer) return;
+    
     reviewsContainer.innerHTML = '';
 
     reviews.forEach((review, index) => {
@@ -141,6 +132,8 @@ function displayReviews(reviews, page) {
 
 function updatePagination() {
     const paginationContainer = document.getElementById('pagination');
+    if (!paginationContainer) return;
+    
     paginationContainer.innerHTML = '';
 
     const prevButton = document.createElement('button');
@@ -179,37 +172,7 @@ function updatePagination() {
     paginationContainer.appendChild(nextButton);
 }
 
-// 下载为 Excel 功能
-document.getElementById('downloadBtn').addEventListener('click', function() {
-    if (allReviews.length === 0) {
-        alert('没有评论可下载！');
-        return;
-    }
 
-    // 准备数据
-    const data = allReviews.map((review, index) => ({
-        "序号": index + 1,
-        "标题": review.title,
-        "评分": review.rating,
-        "作者": review.author,
-        "日期": new Date(review.date).toLocaleDateString(),
-        "内容": review.content
-    }));
-
-    // 使用 SheetJS 将数据转换为工作簿
-    const worksheet = XLSX.utils.json_to_sheet(data);
-    const workbook = XLSX.utils.book_new();
-    XLSX.utils.book_append_sheet(workbook, worksheet, 'Reviews');
-
-    // 生成 Excel 文件并触发下载
-    XLSX.writeFile(workbook, 'App_Reviews.xlsx');
-});
-
-// 关闭"更多工具"功能
-document.getElementById('close-more-tools').addEventListener('click', function() {
-    document.getElementById('more-tools').classList.add('hidden');
-    document.getElementById('show-more-tools').style.display = 'block';
-});
 
 // 添加一个按钮来重新显示"更多工具"（可选）
 function addShowMoreToolsButton() {
@@ -222,7 +185,10 @@ function addShowMoreToolsButton() {
     button.style.display = 'none';
     
     button.addEventListener('click', function() {
-        document.getElementById('more-tools').classList.remove('hidden');
+        const moreTools = document.getElementById('more-tools');
+        if (moreTools) {
+            moreTools.classList.remove('hidden');
+        }
         this.style.display = 'none';
     });
 
@@ -232,6 +198,69 @@ function addShowMoreToolsButton() {
 // 确保 DOM 加载完成后再执行
 document.addEventListener('DOMContentLoaded', function() {
     addShowMoreToolsButton();
+    
+    // 添加分页控制
+    const nextPageBtn = document.getElementById('nextPage');
+    const prevPageBtn = document.getElementById('prevPage');
+    
+    if (nextPageBtn) {
+        nextPageBtn.addEventListener('click', async function() {
+            if (currentPage < totalPages) {
+                currentPage += 1;
+                await loadPage(currentPage);
+            }
+        });
+    }
+    
+    if (prevPageBtn) {
+        prevPageBtn.addEventListener('click', async function() {
+            if (currentPage > 1) {
+                currentPage -= 1;
+                await loadPage(currentPage);
+            }
+        });
+    }
+    
+    // 下载为 Excel 功能
+    const downloadBtn = document.getElementById('downloadBtn');
+    if (downloadBtn) {
+        downloadBtn.addEventListener('click', function() {
+            if (allReviews.length === 0) {
+                alert('没有评论可下载！');
+                return;
+            }
+
+            // 准备数据
+            const data = allReviews.map((review, index) => ({
+                "序号": index + 1,
+                "标题": review.title,
+                "评分": review.rating,
+                "作者": review.author,
+                "日期": new Date(review.date).toLocaleDateString(),
+                "内容": review.content
+            }));
+
+            // 使用 SheetJS 将数据转换为工作簿
+            const worksheet = XLSX.utils.json_to_sheet(data);
+            const workbook = XLSX.utils.book_new();
+            XLSX.utils.book_append_sheet(workbook, worksheet, 'Reviews');
+
+            // 生成 Excel 文件并触发下载
+            XLSX.writeFile(workbook, 'App_Reviews.xlsx');
+        });
+    }
+    
+    // 关闭"更多工具"功能
+    const closeMoreToolsBtn = document.getElementById('close-more-tools');
+    if (closeMoreToolsBtn) {
+        closeMoreToolsBtn.addEventListener('click', function() {
+            document.getElementById('more-tools').classList.add('hidden');
+            const showMoreToolsBtn = document.getElementById('show-more-tools');
+            if (showMoreToolsBtn) {
+                showMoreToolsBtn.style.display = 'block';
+            }
+        });
+    }
     
     // "所有"选项互斥逻辑 - 星级筛选
     document.querySelectorAll('#rating-group input[name="rating"]').forEach(cb => {
