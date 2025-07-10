@@ -4,7 +4,7 @@ const axios = require('axios');
 
 /**
  * 获取指定国家和 App 的评论
- * @param {string} country - 国家代码，如 'us', 'cn'
+ * @param {string} countries - 国家代码，如 'us', 'cn' 或逗号分隔的多个国家
  * @param {string} appId - App 的 Apple ID
  * @param {number} totalReviews - 需要获取的评论总数
  * @param {string} sort - 排序方式，'mostRecent' 或 'mostHelpful'
@@ -12,23 +12,47 @@ const axios = require('axios');
  * @param {string} rating - 星级筛选
  * @returns {Promise<Array>} 评论列表
  */
-async function getAppReviews(country, appId, totalReviews = 100, sort = 'mostRecent', page = 1, rating = '') {
+async function getAppReviews(countries, appId, totalReviews = 100, sort = 'mostRecent', page = 1, rating = '') {
     let reviews = [];
     let currentPage = page;
+    
     // 支持多星级
     let ratingArr = [];
     if (typeof rating === 'string' && rating) {
         ratingArr = rating.split(',').filter(r => r);
     }
-    while (reviews.length < totalReviews) {
-        const fetchedReviews = await fetchAppReviews(country, appId, currentPage, sort);
-        const filteredReviews = ratingArr.length > 0 ?
-            fetchedReviews.filter(review => ratingArr.includes(review.rating)) :
-            fetchedReviews;
-        reviews.push(...filteredReviews);
-        if (fetchedReviews.length === 0) break; // No more reviews to fetch
-        currentPage++;
+    
+    // 支持多国家
+    let countryArr = [];
+    if (typeof countries === 'string' && countries) {
+        countryArr = countries.split(',').filter(c => c);
     }
+    
+    // 如果没有指定国家，默认使用 'us'
+    if (countryArr.length === 0) {
+        countryArr = ['us'];
+    }
+    
+    // 为每个国家获取评论
+    for (const country of countryArr) {
+        let countryReviews = [];
+        let countryPage = page;
+        
+        while (countryReviews.length < totalReviews / countryArr.length) {
+            const fetchedReviews = await fetchAppReviews(country, appId, countryPage, sort);
+            const filteredReviews = ratingArr.length > 0 ?
+                fetchedReviews.filter(review => ratingArr.includes(review.rating)) :
+                fetchedReviews;
+            countryReviews.push(...filteredReviews);
+            if (fetchedReviews.length === 0) break; // No more reviews to fetch
+            countryPage++;
+        }
+        
+        reviews.push(...countryReviews);
+    }
+    
+    // 按日期排序并限制总数
+    reviews.sort((a, b) => new Date(b.date) - new Date(a.date));
     return reviews.slice(0, totalReviews);
 }
 
@@ -99,10 +123,10 @@ module.exports = async (req, res) => {
         return;
     }
 
-    console.log(`Fetching reviews for Country: ${country}, App ID: ${app_id}, Total Reviews: ${totalReviewsNum}, Sort: ${sort}, Page: ${pageNum}, Rating: ${rating}`);
+    console.log(`Fetching reviews for Countries: ${country}, App ID: ${app_id}, Total Reviews: ${totalReviewsNum}, Sort: ${sort}, Page: ${pageNum}, Rating: ${rating}`);
 
     try {
-        // rating 可能为逗号分隔字符串
+        // rating 可能为逗号分隔字符串，country 也可能为逗号分隔字符串
         const appReviews = await getAppReviews(country, app_id, totalReviewsNum, sort, pageNum, rating);
         res.status(200).json({ reviews: appReviews });
     } catch (error) {
